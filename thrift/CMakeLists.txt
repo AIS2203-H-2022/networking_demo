@@ -1,8 +1,7 @@
-set(generatedSourcesDir ${CMAKE_BINARY_DIR}/generated)
-set(thriftPythonSourcesDir "${CMAKE_SOURCE_DIR}/thrift/python")
-set(thriftCppSourcesDir "${generatedSourcesDir}/cpp/demo/thrift")
 
-file(MAKE_DIRECTORY "${generatedSourcesDir}")
+set(thriftPythonSourcesDir "${CMAKE_SOURCE_DIR}/thrift/python")
+set(thriftCppSourcesDir "${generatedSourcesDir}/thrift/cpp/demo/thrift")
+
 file(MAKE_DIRECTORY "${thriftCppSourcesDir}")
 file(MAKE_DIRECTORY "${thriftPythonSourcesDir}")
 
@@ -36,7 +35,7 @@ set(thriftGenerated
         )
 
 add_library(thrift_service ${thriftGenerated})
-target_include_directories(thrift_service PUBLIC ${generatedSourcesDir}/cpp)
+target_include_directories(thrift_service PUBLIC ${generatedSourcesDir}/thrift/cpp)
 target_link_libraries(thrift_service PUBLIC CONAN_PKG::thrift)
 
 add_executable(thrift_server thrift_server.cpp)
