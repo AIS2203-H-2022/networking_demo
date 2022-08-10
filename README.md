@@ -6,6 +6,7 @@ Code showcasing data transmission using various networking technologies using C+
 * UDP
 * TCP/IP
 * Thrift (RPC framework)
+* DDS (Publish-Subscribe framework)
 
 Code is for demonstration purposes only, and is not necessary perfect.
 
