@@ -3,5 +3,5 @@ cmake-build-*
 
 .idea
 
-thrift/python/
-!thrift/python/py_client.py
+thrift/python/*
+!thrift/python/py_thrift_client.py

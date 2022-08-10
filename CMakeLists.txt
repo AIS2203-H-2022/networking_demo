@@ -6,6 +6,7 @@ option(WITH_THRIFT "Build Thrift demo" ON)
 set(CMAKE_CXX_STANDARD 17)
 
 if (MSVC)
+    # Boost asio wants this...
     add_compile_definitions("_WIN32_WINNT=0x0601")
 endif()
 

@@ -48,8 +48,8 @@ private:
 
     std::string recv() {
         boost::asio::streambuf buf;
-        auto read = boost::asio::read_until(*socket_, buf, "\n");
-        std::string data(boost::asio::buffer_cast<const char *>(buf.data()), read - 1);
+        auto read = boost::asio::read_until(*socket_, buf, "\n"); // uses '\n' as delimiter
+        std::string data(boost::asio::buffer_cast<const char *>(buf.data()), read - 1); // excludes '\n'
         return data;
     }
 };
