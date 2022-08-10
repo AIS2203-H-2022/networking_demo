@@ -81,7 +81,7 @@ public:
         participantQos.name("Participant_publisher");
         participant_ = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);
 
-        if (participant_ == nullptr) {
+        if (!participant_) {
             return false;
         }
 
@@ -91,21 +91,21 @@ public:
         // Create the publications Topic
         topic_ = participant_->create_topic("HelloWorldTopic", "HelloWorld", TOPIC_QOS_DEFAULT);
 
-        if (topic_ == nullptr) {
+        if (!topic_) {
             return false;
         }
 
         // Create the Publisher
         publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
 
-        if (publisher_ == nullptr) {
+        if (!publisher_) {
             return false;
         }
 
         // Create the DataWriter
         writer_ = publisher_->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, &listener_);
 
-        if (writer_ == nullptr) {
+        if (!writer_) {
             return false;
         }
         return true;
@@ -122,8 +122,8 @@ public:
     }
 
     //!Run the Publisher
-    void run(uint32_t samples) {
-        uint32_t samples_sent = 0;
+    void run(int samples) {
+        int samples_sent = 0;
         while (samples_sent < samples) {
             if (publish()) {
                 samples_sent++;
@@ -135,13 +135,13 @@ public:
     }
 
     ~HelloWorldPublisher() {
-        if (writer_ != nullptr) {
+        if (writer_) {
             publisher_->delete_datawriter(writer_);
         }
-        if (publisher_ != nullptr) {
+        if (publisher_) {
             participant_->delete_publisher(publisher_);
         }
-        if (topic_ != nullptr) {
+        if (topic_) {
             participant_->delete_topic(topic_);
         }
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
@@ -154,7 +154,7 @@ int main() {
 
     HelloWorldPublisher mypub;
     if (mypub.init()) {
-        mypub.run(static_cast<uint32_t>(samples));
+        mypub.run(samples);
     }
 
     return 0;

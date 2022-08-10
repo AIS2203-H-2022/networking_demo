@@ -89,7 +89,7 @@ public:
         participantQos.name("Participant_subscriber");
         participant_ = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);
 
-        if (participant_ == nullptr) {
+        if (!participant_) {
             return false;
         }
 
@@ -99,14 +99,14 @@ public:
         // Create the subscriptions Topic
         topic_ = participant_->create_topic("HelloWorldTopic", "HelloWorld", TOPIC_QOS_DEFAULT);
 
-        if (topic_ == nullptr) {
+        if (!topic_) {
             return false;
         }
 
         // Create the Subscriber
         subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
 
-        if (subscriber_ == nullptr) {
+        if (!subscriber_) {
             return false;
         }
 
@@ -121,20 +121,20 @@ public:
     }
 
     //!Run the Subscriber
-    void run(uint32_t samples) const {
+    void run(int samples) const {
         while (listener_.samples_ < samples) {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     }
 
     ~HelloWorldSubscriber() {
-        if (reader_ != nullptr) {
+        if (reader_) {
             subscriber_->delete_datareader(reader_);
         }
-        if (topic_ != nullptr) {
+        if (topic_) {
             participant_->delete_topic(topic_);
         }
-        if (subscriber_ != nullptr) {
+        if (subscriber_) {
             participant_->delete_subscriber(subscriber_);
         }
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
@@ -148,7 +148,7 @@ int main() {
 
     HelloWorldSubscriber mysub;
     if (mysub.init()) {
-        mysub.run(static_cast<uint32_t>(samples));
+        mysub.run(samples);
     }
 
     return 0;
