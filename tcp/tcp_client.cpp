@@ -3,16 +3,25 @@
 
 #include <array>
 #include <iostream>
+#include <string>
 
 using boost::asio::ip::tcp;
 
-int main() {
+int main(int argc, char** argv) {
+
+    std::string host = "127.0.0.1";
+    std::string port = "9090";
+    if(argc == 3) {
+        // assuming <hostname> <port>
+        host = argv[1];
+        port = argv[2];
+    }
 
     try {
         boost::asio::io_service io_service;
 
         tcp::resolver resolver(io_service);
-        auto endpoints = resolver.resolve("127.0.0.1", "9090");
+        auto endpoints = resolver.resolve(host, port);
 
         tcp::socket socket(io_service);
         boost::asio::connect(socket, endpoints);

@@ -43,7 +43,7 @@ int main() {
     });
 
     std::cout << "Press a key to continue..." << std::endl;
-    while (std::cin.get() != '\n') {};
+    while (std::cin.get() != '\n') {}
 
     server->stop();
 

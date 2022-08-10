@@ -6,11 +6,22 @@
 
 using boost::asio::ip::udp;
 
-const int port = 13;
-const char* host = "127.0.0.1"; // loopback address, i.e. "localhost"
 const int MAX_UDP_PACKET_SIZE = 65508;
 
-int main() {
+int main(int argc, char** argv) {
+
+    std::string host = "127.0.0.1";
+    int port = 13;
+    if(argc == 3) {
+        // assuming <hostname> <port>
+        host = argv[1];
+        try {
+            port = std::stoi(argv[2]);
+        } catch (const std::exception& ex) {
+            std::cerr << "Unable to parse port.." << std::endl;
+            return 1;
+        }
+    }
 
     try {
 
@@ -20,7 +31,7 @@ int main() {
         udp::socket socket(io_service);
         socket.open(udp::v4());
 
-        udp::endpoint receiver_endpoint(boost::asio::ip::address::from_string(host), 13);
+        udp::endpoint receiver_endpoint(boost::asio::ip::address::from_string(host), port);
         socket.send_to(boost::asio::buffer(message), receiver_endpoint);
 
         udp::endpoint sender_endpoint;

@@ -7,10 +7,20 @@
 
 using boost::asio::ip::udp;
 
-const int port = 13; // just some hopefully open port
 const int MAX_UDP_PACKET_SIZE = 65508;
 
-int main() {
+int main(int argc, char **argv) {
+
+    int port = 13;
+    if (argc == 2) {
+        // assuming <port> as input
+        try {
+            port = std::stoi(argv[1]);
+        } catch (const std::exception &ex) {
+            std::cerr << "Unable to parse port.." << std::endl;
+            return 1;
+        }
+    }
 
     try {
 
@@ -40,7 +50,7 @@ int main() {
         });
 
         std::cout << "Press a key to continue..." << std::endl;
-        while (std::cin.get() != '\n') {};
+        while (std::cin.get() != '\n') {}
 
         io_service.stop();
         t.join();
