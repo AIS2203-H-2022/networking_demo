@@ -31,6 +31,7 @@
 using namespace eprosima::fastdds::dds;
 
 class HelloWorldSubscriber {
+
 private:
     DomainParticipant *participant_;
     Subscriber *subscriber_;
@@ -41,8 +42,7 @@ private:
     class SubListener : public DataReaderListener {
     public:
         SubListener()
-            : samples_(0) {
-        }
+            : samples_(0) {}
 
         ~SubListener() override = default;
 
@@ -59,8 +59,7 @@ private:
             }
         }
 
-        void on_data_available(
-                DataReader *reader) override {
+        void on_data_available(DataReader *reader) override {
             SampleInfo info;
             if (reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK) {
                 if (info.valid_data) {
@@ -78,21 +77,11 @@ private:
 
 public:
     HelloWorldSubscriber()
-        : participant_(nullptr), subscriber_(nullptr), topic_(nullptr), reader_(nullptr), type_(new HelloWorldPubSubType()) {
-    }
-
-    virtual ~HelloWorldSubscriber() {
-        if (reader_ != nullptr) {
-            subscriber_->delete_datareader(reader_);
-        }
-        if (topic_ != nullptr) {
-            participant_->delete_topic(topic_);
-        }
-        if (subscriber_ != nullptr) {
-            participant_->delete_subscriber(subscriber_);
-        }
-        DomainParticipantFactory::get_instance()->delete_participant(participant_);
-    }
+        : participant_(nullptr),
+          subscriber_(nullptr),
+          topic_(nullptr),
+          reader_(nullptr),
+          type_(new HelloWorldPubSubType()) {}
 
     //!Initialize the subscriber
     bool init() {
@@ -137,6 +126,20 @@ public:
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     }
+
+    ~HelloWorldSubscriber() {
+        if (reader_ != nullptr) {
+            subscriber_->delete_datareader(reader_);
+        }
+        if (topic_ != nullptr) {
+            participant_->delete_topic(topic_);
+        }
+        if (subscriber_ != nullptr) {
+            participant_->delete_subscriber(subscriber_);
+        }
+        DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    }
+
 };
 
 int main() {

@@ -29,6 +29,7 @@
 using namespace eprosima::fastdds::dds;
 
 class HelloWorldPublisher {
+
 private:
     HelloWorld hello_;
     DomainParticipant *participant_;
@@ -65,21 +66,11 @@ private:
 
 public:
     HelloWorldPublisher()
-        : participant_(nullptr), publisher_(nullptr), topic_(nullptr), writer_(nullptr), type_(new HelloWorldPubSubType()) {
-    }
-
-    virtual ~HelloWorldPublisher() {
-        if (writer_ != nullptr) {
-            publisher_->delete_datawriter(writer_);
-        }
-        if (publisher_ != nullptr) {
-            participant_->delete_publisher(publisher_);
-        }
-        if (topic_ != nullptr) {
-            participant_->delete_topic(topic_);
-        }
-        DomainParticipantFactory::get_instance()->delete_participant(participant_);
-    }
+        : participant_(nullptr),
+          publisher_(nullptr),
+          topic_(nullptr),
+          writer_(nullptr),
+          type_(new HelloWorldPubSubType()) {}
 
     //!Initialize the publisher
     bool init() {
@@ -142,11 +133,22 @@ public:
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         }
     }
+
+    ~HelloWorldPublisher() {
+        if (writer_ != nullptr) {
+            publisher_->delete_datawriter(writer_);
+        }
+        if (publisher_ != nullptr) {
+            participant_->delete_publisher(publisher_);
+        }
+        if (topic_ != nullptr) {
+            participant_->delete_topic(topic_);
+        }
+        DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    }
 };
 
-int main(
-        int argc,
-        char **argv) {
+int main() {
     std::cout << "Starting publisher." << std::endl;
     int samples = 10;
 
