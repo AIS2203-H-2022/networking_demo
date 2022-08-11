@@ -1,16 +1,9 @@
-from dataclasses import dataclass
-from cyclonedds.idl import IdlStruct
 from cyclonedds.domain import DomainParticipant
 from cyclonedds.topic import Topic
 from cyclonedds.sub import DataReader
 from cyclonedds.util import duration
-from cyclonedds.idl.types import uint32
 
-
-@dataclass
-class HelloWorld(IdlStruct):
-    index: uint32  # matches unsigned long in HelloWorld.idl
-    message: str
+from HelloWorld import HelloWorld
 
 
 def main():
