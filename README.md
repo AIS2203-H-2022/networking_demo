@@ -5,6 +5,7 @@ Code showcasing data transmission using various networking technologies using C+
 #### Features:
 * UDP
 * TCP/IP
+* ZMQ
 * Thrift (RPC framework)
 * DDS (Publish-Subscribe framework)
 
