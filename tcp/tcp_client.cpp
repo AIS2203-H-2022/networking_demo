@@ -7,11 +7,11 @@
 
 using boost::asio::ip::tcp;
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
 
     std::string host = "127.0.0.1";
     std::string port = "9090";
-    if(argc == 3) {
+    if (argc == 3) {
         // assuming <hostname> <port>
         host = argv[1];
         port = argv[2];

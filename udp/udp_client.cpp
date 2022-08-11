@@ -8,16 +8,16 @@ using boost::asio::ip::udp;
 
 const int MAX_UDP_PACKET_SIZE = 65508;
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
 
     std::string host = "127.0.0.1";
     int port = 13;
-    if(argc == 3) {
+    if (argc == 3) {
         // assuming <hostname> <port>
         host = argv[1];
         try {
             port = std::stoi(argv[2]);
-        } catch (const std::exception& ex) {
+        } catch (const std::exception &ex) {
             std::cerr << "Unable to parse port.." << std::endl;
             return 1;
         }
@@ -39,10 +39,9 @@ int main(int argc, char** argv) {
         auto len = socket.receive_from(boost::asio::buffer(recv_buf), sender_endpoint);
         std::string recv(recv_buf.begin(), recv_buf.begin() + static_cast<int>(len));
 
-        std::cout << "Server responded with: " << recv  << std::endl;
+        std::cout << "Server responded with: " << recv << std::endl;
 
-    } catch (std::exception& e) {
+    } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
     }
-
 }

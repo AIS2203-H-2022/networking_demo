@@ -13,7 +13,6 @@ def main():
 
         sock.send("Per\n".encode("utf-8"))
         data = sock.recv(256)
-        size = len(data)
 
         print("Got: {}".format(data.decode("utf-8")))
     finally:

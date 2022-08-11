@@ -13,7 +13,6 @@ using namespace apache::thrift::transport;
 using namespace apache::thrift::protocol;
 using namespace demo::thrift;
 
-const int port = 8080;
 
 class demo_handler : public ThriftDemoIf {
 public:
@@ -22,7 +21,18 @@ public:
     }
 };
 
-int main() {
+int main(int argc, char **argv) {
+
+    int port = 8080;
+    if (argc == 2) {
+        // assuming <port> as input
+        try {
+            port = std::stoi(argv[1]);
+        } catch (const std::exception &ex) {
+            std::cerr << "Unable to parse port.." << std::endl;
+            return 1;
+        }
+    }
 
     std::shared_ptr<ThriftDemoIf> handler = std::make_shared<demo_handler>();
     std::shared_ptr<TProcessor> processor = std::make_shared<ThriftDemoProcessor>(handler);
@@ -34,12 +44,12 @@ int main() {
 
     std::unique_ptr<TSimpleServer> server = std::make_unique<TSimpleServer>(processor, serverTransport, transportFactory, protocolFactory);
 
-    std::thread t([&]{
-       try {
-           server->serve();
-       } catch (const std::exception& ex) {
-           std::cerr << ex.what() << std::endl;
-       }
+    std::thread t([&] {
+        try {
+            server->serve();
+        } catch (const std::exception &ex) {
+            std::cerr << ex.what() << std::endl;
+        }
     });
 
     std::cout << "Press a key to continue..." << std::endl;

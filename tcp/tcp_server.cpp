@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
         // assuming <port> as input
         try {
             port = std::stoi(argv[1]);
-        } catch (const std::exception& ex) {
+        } catch (const std::exception &ex) {
             std::cerr << "Unable to parse port.." << std::endl;
             return 1;
         }
