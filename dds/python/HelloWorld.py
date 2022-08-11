@@ -1,9 +1,8 @@
 from dataclasses import dataclass
 from cyclonedds.idl import IdlStruct
-from cyclonedds.idl.types import uint32
+from cyclonedds.idl.types import sequence, char
 
 
 @dataclass
 class HelloWorld(IdlStruct):
-    index: uint32  # matches unsigned long in HelloWorld.idl
-    message: str
+    data: str

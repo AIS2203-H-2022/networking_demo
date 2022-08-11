@@ -5,6 +5,9 @@ from cyclonedds.util import duration
 
 from HelloWorld import HelloWorld
 
+import io
+from PIL import Image
+
 
 def main():
     print("Starting subscriber.")
@@ -13,8 +16,13 @@ def main():
     reader = DataReader(participant, topic)
 
     # If we don't receive a single announcement for three seconds we want the script to exit.
-    for msg in reader.take_iter(timeout=duration(seconds=3)):
-        print("Message: {} with index: {} RECEIVED".format(msg.message, msg.index))
+    for msg in reader.take_iter(timeout=duration(seconds=1)):
+        stream = io.BytesIO()
+        stream.write(msg.data.encode("ISO-8859-1"))
+        stream.seek(0)
+        img = Image.open(stream)
+        print(img.size)
+        print("Message RECEIVED")
 
 
 if __name__ == "__main__":

@@ -5,6 +5,9 @@ from cyclonedds.domain import DomainParticipant
 from cyclonedds.topic import Topic
 from cyclonedds.pub import DataWriter
 
+import io
+from PIL import Image
+
 from HelloWorld import HelloWorld
 
 
@@ -25,19 +28,31 @@ class MyListener(Listener):
             pass
 
 
+def image_to_byte_array(image: Image) -> bytes:
+    # BytesIO is a fake file stored in memory
+    imgByteArr = io.BytesIO()
+    # image.save expects a file as a argument, passing a bytes io ins
+    image.save(imgByteArr, format=image.format)
+    # Turn the BytesIO object back into a bytes object
+    imgByteArr = imgByteArr.getvalue()
+    return imgByteArr
+
+
 class HelloWorldPublisher:
 
     def __init__(self):
         participant = DomainParticipant()
         topic = Topic(participant, "HelloWorldTopic", HelloWorld)
 
+        image = Image.open("Lenna.png")
+        bytes = image_to_byte_array(image)
         self.listener = MyListener()
         self.writer = DataWriter(participant, topic, listener=self.listener)
-        self.message = HelloWorld(index=0, message="HelloWorld")
+        self.message = HelloWorld(data=bytes.decode("ISO-8859-1"))
 
     def __publish(self) -> bool:
         if self.listener.matched > 0:
-            self.message.index = self.message.index + 1
+            # self.message.index = self.message.index + 1
             self.writer.write(self.message)
             return True
         return False
@@ -47,8 +62,9 @@ class HelloWorldPublisher:
         while samples_sent < num_samples:
             if self.__publish():
                 samples_sent = samples_sent + 1
-                print("Message: {} with index {} SENT".format(self.message.message, self.message.index))
-            time.sleep(1)
+                print("Message SENT")
+            else:
+                time.sleep(1)
 
 
 def main():
