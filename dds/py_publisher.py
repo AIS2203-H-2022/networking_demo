@@ -14,7 +14,6 @@ class HelloWorld(IdlStruct):
     message: str
 
 
-
 message = HelloWorld(index=0, message="HelloWorld")
 
 
