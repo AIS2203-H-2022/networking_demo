@@ -5,4 +5,4 @@ from cyclonedds.idl.types import sequence, char
 
 @dataclass
 class HelloWorld(IdlStruct):
-    data: str
+    data: sequence[int]
