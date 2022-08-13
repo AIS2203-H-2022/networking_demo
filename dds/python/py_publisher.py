@@ -48,7 +48,7 @@ class HelloWorldPublisher:
         bytes = image_to_byte_array(image)
         self.listener = MyListener()
         self.writer = DataWriter(participant, topic, listener=self.listener)
-        self.message = HelloWorld(data=bytes.decode("ISO-8859-1"))
+        self.message = HelloWorld(data=list(bytes))
 
     def __publish(self) -> bool:
         if self.listener.matched > 0:

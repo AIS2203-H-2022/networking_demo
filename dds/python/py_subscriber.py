@@ -18,7 +18,7 @@ def main():
     # If we don't receive a single announcement for three seconds we want the script to exit.
     for msg in reader.take_iter(timeout=duration(seconds=1)):
         stream = io.BytesIO()
-        stream.write(msg.data.encode("ISO-8859-1"))
+        stream.write(bytes(msg.data))
         stream.seek(0)
         img = Image.open(stream)
         print(img.size)
