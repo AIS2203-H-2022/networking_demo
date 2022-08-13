@@ -9,7 +9,7 @@ from threading import Thread
 
 import cv2 as cv
 
-from HelloWorld import HelloWorld
+from ImageStruct import ImageStruct
 
 
 class MyListener(Listener):
@@ -33,22 +33,26 @@ class HelloWorldPublisher:
 
     def __init__(self):
         participant = DomainParticipant()
-        topic = Topic(participant, "HelloWorldTopic", HelloWorld)
+        topic = Topic(participant, "HelloWorldTopic", ImageStruct)
 
-        self.vid = cv.VideoCapture(0)
+        self.vid = cv.VideoCapture()
+        if not self.vid.open(0):
+            self.vid = None
+
         self.stop = False
 
         self.listener = MyListener()
         self.writer = DataWriter(participant, topic, listener=self.listener)
-        self.message = HelloWorld(data=list(bytes))
 
     def __publish(self) -> bool:
         if self.listener.matched > 0:
-            # self.message.index = self.message.index + 1
-            img = self.vid.read()[1]
-            encode_param = [int(cv.IMWRITE_JPEG_QUALITY), 90]
-            result, encimg = cv.imencode('.jpg', img, encode_param)
-            message = HelloWorld(encimg.tolist())
+            if self.vid is not None:
+                img = self.vid.read()[1]
+                encode_param = [int(cv.IMWRITE_JPEG_QUALITY), 90]
+                img = cv.imencode('.jpg', img, encode_param)[1]
+            else:
+                img = cv.imread("Lenna.png")
+            message = ImageStruct(img.tolist())
             self.writer.write(message)
             return True
         return False
@@ -59,7 +63,8 @@ class HelloWorldPublisher:
                 print("Message SENT")
             else:
                 time.sleep(1)
-        self.vid.release()
+        if self.vid is not None:
+            self.vid.release()
 
 
 def main():

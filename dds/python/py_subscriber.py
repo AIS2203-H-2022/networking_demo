@@ -3,18 +3,16 @@ from cyclonedds.topic import Topic
 from cyclonedds.sub import DataReader
 from cyclonedds.util import duration
 
-from HelloWorld import HelloWorld
-
-import io
-from PIL import Image
+from ImageStruct import ImageStruct
 
 import cv2 as cv
 import numpy as np
 
+
 def main():
     print("Starting subscriber.")
     participant = DomainParticipant()
-    topic = Topic(participant, "HelloWorldTopic", HelloWorld)
+    topic = Topic(participant, "HelloWorldTopic", ImageStruct)
     reader = DataReader(participant, topic)
 
     cv.namedWindow("img")
