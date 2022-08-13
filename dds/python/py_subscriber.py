@@ -8,6 +8,8 @@ from HelloWorld import HelloWorld
 import io
 from PIL import Image
 
+import cv2 as cv
+import numpy as np
 
 def main():
     print("Starting subscriber.")
@@ -15,13 +17,15 @@ def main():
     topic = Topic(participant, "HelloWorldTopic", HelloWorld)
     reader = DataReader(participant, topic)
 
+    cv.namedWindow("img")
+
     # If we don't receive a single announcement for three seconds we want the script to exit.
     for msg in reader.take_iter(timeout=duration(seconds=1)):
-        stream = io.BytesIO()
-        stream.write(bytes(msg.data))
-        stream.seek(0)
-        img = Image.open(stream)
-        print(img.size)
+
+        buf = np.frombuffer(bytes(msg.data), dtype=np.uint8)
+        img = cv.imdecode(buf, cv.IMREAD_COLOR)
+        cv.imshow("img", img)
+        cv.waitKey(10)
         print("Message RECEIVED")
 
 
