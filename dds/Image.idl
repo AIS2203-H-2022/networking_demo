@@ -1,0 +1,4 @@
+struct ImageStruct
+{
+    sequence<octet> data;
+};
