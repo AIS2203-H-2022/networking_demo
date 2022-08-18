@@ -42,25 +42,6 @@ private:
             }
         }
 
-        void on_sample_lost(DataReader *reader, const SampleLostStatus &status) override {
-            DataReaderListener::on_sample_lost(reader, status);
-        }
-
-        void on_requested_deadline_missed(DataReader *reader, const RequestedDeadlineMissedStatus &status) override {
-            DataReaderListener::on_requested_deadline_missed(reader, status);
-        }
-        void on_liveliness_changed(DataReader *reader, const LivelinessChangedStatus &status) override {
-            DataReaderListener::on_liveliness_changed(reader, status);
-        }
-        void on_sample_rejected(DataReader *reader, const SampleRejectedStatus &status) override {
-            DataReaderListener::on_sample_rejected(reader, status);
-        }
-        void on_requested_incompatible_qos(DataReader *reader, const RequestedIncompatibleQosStatus &status) override {
-            DataReaderListener::on_requested_incompatible_qos(reader, status);
-        }
-
-
-
         void on_data_available(DataReader *reader) override {
             SampleInfo info;
             if (reader->take_next_sample(&image_, &info) == ReturnCode_t::RETCODE_OK) {
