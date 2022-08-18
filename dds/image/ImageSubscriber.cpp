@@ -48,14 +48,11 @@ private:
                 if (info.valid_data) {
                     auto& data = image_.data();
                     Mat image = imdecode(data, IMREAD_COLOR);
-//                    imshow("img", image);
-//                    waitKey(1);
-//                    samples_++;
-                    std::cout << "Message with size: " << image_.data().size()
-                              << " RECEIVED." << std::endl;
+                    imshow("img", image);
+                    waitKey(1);
+//                    std::cout << "Message with size: " << image_.data().size()
+//                              << " RECEIVED." << std::endl;
                 }
-            } else {
-                std::cout << "ok.." << std::endl;
             }
         }
 
@@ -99,7 +96,9 @@ public:
         }
 
         // Create the DataReader
-        reader_ = subscriber_->create_datareader(topic_, DATAREADER_QOS_DEFAULT, &listener_);
+        DataReaderQos readerQos;
+        readerQos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::DYNAMIC_REUSABLE_MEMORY_MODE;
+        reader_ = subscriber_->create_datareader(topic_, readerQos, &listener_);
 
         if (reader_ == nullptr) {
             return false;

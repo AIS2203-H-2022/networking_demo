@@ -70,7 +70,9 @@ public:
         type_.register_type(participant_);
 
         // Create the publications Topic
-        topic_ = participant_->create_topic("ImageTopic", "ImageStruct", TOPIC_QOS_DEFAULT);
+        TopicQos topicQos;
+        topicQos.history().kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
+        topic_ = participant_->create_topic("ImageTopic", "ImageStruct", topicQos);
 
         if (!topic_) {
             return false;
@@ -84,7 +86,10 @@ public:
         }
 
         // Create the DataWriter
-        writer_ = publisher_->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, &listener_);
+        DataWriterQos writerQos;
+        writerQos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::DYNAMIC_REUSABLE_MEMORY_MODE;
+        writerQos.reliability().kind = ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
+        writer_ = publisher_->create_datawriter(topic_, writerQos, &listener_);
 
         if (!writer_) {
             return false;
@@ -105,14 +110,19 @@ public:
         while (!stop) {
             Mat img;
             ImageStruct is;
+
             if (listener_.matched_ > 0) {
+
                 capture_.read(img);
-                imencode(".jpg", img, is.data());
+
+                std::vector<uint8_t> buf;
+                imencode(".jpg", img, buf);
+
+                is.data(std::move(buf));
                 writer_->write(&is);
-                std::cout << "wrote data: " << is.data().size() << std::endl;
 
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
 
         t.join();
