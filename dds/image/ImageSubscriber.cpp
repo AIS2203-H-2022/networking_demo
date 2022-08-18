@@ -28,9 +28,6 @@ private:
 
     class SubListener : public DataReaderListener {
     public:
-        //SubListener() {}
-
-        ~SubListener() override = default;
 
         void on_subscription_matched(
                 DataReader *,
@@ -61,6 +58,8 @@ private:
         void on_requested_incompatible_qos(DataReader *reader, const RequestedIncompatibleQosStatus &status) override {
             DataReaderListener::on_requested_incompatible_qos(reader, status);
         }
+
+
 
         void on_data_available(DataReader *reader) override {
             SampleInfo info;
@@ -139,9 +138,10 @@ public:
         });
 
         while (!stop) {
-            std::cout << listener_.image_.data().size() << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
+
+        t.join();
     }
 
     ~ImageSubscriber() {

@@ -29,11 +29,11 @@ class MyListener(Listener):
             pass
 
 
-class HelloWorldPublisher:
+class ImagePublisher:
 
     def __init__(self):
         participant = DomainParticipant()
-        topic = Topic(participant, "HelloWorldTopic", ImageStruct)
+        topic = Topic(participant, "ImageTopic", ImageStruct)
 
         self.vid = cv.VideoCapture()
         if not self.vid.open(0):
@@ -46,12 +46,14 @@ class HelloWorldPublisher:
 
     def __publish(self) -> bool:
         if self.listener.matched > 0:
+
+            encode_param = [int(cv.IMWRITE_JPEG_QUALITY), 90]
             if self.vid is not None:
                 img = self.vid.read()[1]
-                encode_param = [int(cv.IMWRITE_JPEG_QUALITY), 90]
-                img = cv.imencode('.jpg', img, encode_param)[1]
             else:
                 img = cv.imread("Lenna.png")
+
+            img = cv.imencode('.jpg', img, encode_param)[1]
             message = ImageStruct(img.tolist())
             self.writer.write(message)
             return True
@@ -60,7 +62,8 @@ class HelloWorldPublisher:
     def run(self):
         while not self.stop:
             if self.__publish():
-                print("Message SENT")
+                pass
+                #print("Message SENT")
             else:
                 time.sleep(1)
         if self.vid is not None:
@@ -68,9 +71,9 @@ class HelloWorldPublisher:
 
 
 def main():
-    print("Starting publisher.")
+    print("Starting image publisher.")
 
-    pub = HelloWorldPublisher()
+    pub = ImagePublisher()
     t = Thread(target=pub.run)
     t.start()
 

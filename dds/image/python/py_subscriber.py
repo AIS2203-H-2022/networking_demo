@@ -10,19 +10,19 @@ import numpy as np
 
 
 def main():
-    print("Starting subscriber.")
+    print("Starting image subscriber.")
     participant = DomainParticipant()
-    topic = Topic(participant, "RaspiImageTopic", ImageStruct)
+    topic = Topic(participant, "ImageTopic", ImageStruct)
     reader = DataReader(participant, topic)
 
-    display = False
+    active_window = False
 
     # If we don't receive a single announcement for three seconds we want the script to exit.
     for msg in reader.take_iter(timeout=duration(seconds=3)):
 
-        if not display:
+        if not active_window:
             cv.namedWindow("img")
-            display = True
+            active_window = True
 
         buf = np.frombuffer(bytes(msg.data), dtype=np.uint8)
         img = cv.imdecode(buf, cv.IMREAD_COLOR)

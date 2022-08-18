@@ -7,9 +7,7 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <opencv2/core.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgcodecs.hpp>
+#include <opencv2/opencv.hpp>
 
 using namespace cv;
 using namespace eprosima::fastdds::dds;
@@ -17,7 +15,6 @@ using namespace eprosima::fastdds::dds;
 class ImagePublisher {
 
 private:
-    ImageStruct img_;
     DomainParticipant *participant_;
     Publisher *publisher_;
     Topic *topic_;
@@ -29,8 +26,6 @@ private:
     public:
         PubListener()
             : matched_(0) {}
-
-        ~PubListener() override = default;
 
         void on_publication_matched(
                 DataWriter *,
@@ -62,7 +57,6 @@ public:
 
     //!Initialize the publisher
     bool init() {
-        img_ = ImageStruct();
 
         DomainParticipantQos participantQos;
         participantQos.name("Participant_publisher");
@@ -109,18 +103,19 @@ public:
         });
 
         while (!stop) {
+            Mat img;
+            ImageStruct is;
             if (listener_.matched_ > 0) {
-                Mat img;
                 capture_.read(img);
-                std::vector<uint8_t> buf;
-                imencode(".jpg", img, buf);
-                img_.data(buf);
-                writer_->write(&img_);
-                std::cout << "wrote data: " << img_.data().size() << std::endl;
+                imencode(".jpg", img, is.data());
+                writer_->write(&is);
+                std::cout << "wrote data: " << is.data().size() << std::endl;
 
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         }
+
+        t.join();
     }
 
     ~ImagePublisher() {
