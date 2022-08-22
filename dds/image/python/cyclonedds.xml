@@ -2,7 +2,7 @@
 <CycloneDDS>
     <Domain>
         <General>
-            <AllowMulticast>false</AllowMulticast>
+<!--            <AllowMulticast>false</AllowMulticast>-->
         </General>
         <Discovery>
             <ParticipantIndex>auto</ParticipantIndex>
