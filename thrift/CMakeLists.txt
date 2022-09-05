@@ -7,7 +7,7 @@ file(MAKE_DIRECTORY "${thriftPythonSourcesDir}")
 
 message(${thriftPythonSourcesDir})
 
-find_program(THRIFT_EXECUTABLE NAMES thrift)
+find_program(THRIFT_EXECUTABLE NAMES thrift HINTS "${CONAN_THRIFT_ROOT}/bin")
 
 if (NOT THRIFT_EXECUTABLE)
     message(FATAL_ERROR "The thrift compiler was not found. Cannot generate Thrift sources.")
