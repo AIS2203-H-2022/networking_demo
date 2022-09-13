@@ -23,5 +23,3 @@ target_link_libraries(HelloWorldPublisher PUBLIC dds_hello_service)
 
 add_executable(HelloWorldSubscriber HelloWorldSubscriber.cpp)
 target_link_libraries(HelloWorldSubscriber PUBLIC dds_hello_service)
-
-add_subdirectory(image)
