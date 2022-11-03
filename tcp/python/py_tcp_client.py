@@ -11,8 +11,14 @@ def main():
         sock.connect(server_address)
 
         for i in range(0, 10):
-            sock.send("{}\n".format(i).encode("utf-8"))
-            data = sock.recv(256).decode("utf-8")[:-1]
+            msg = "{}".format(i).encode("utf-8")
+
+            msgSize = len(msg)
+            sock.send(msgSize.to_bytes(4, byteorder="big"))
+            sock.send(msg)
+
+            msgSize = int.from_bytes(sock.recv(4), byteorder="big")
+            data = sock.recv(msgSize).decode("utf-8")
             print("Got: {}".format(data))
 
 

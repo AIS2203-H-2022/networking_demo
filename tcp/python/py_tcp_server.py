@@ -14,8 +14,12 @@ def main():
             with conn:
                 print(f"Connected by {addr}")
                 while True:
-                    data = conn.recv(256).decode("utf-8")[:-1] # remove '\n'
-                    conn.send("Hello, {}!\n".format(data).encode("utf-8"))
+                    msgSize = int.from_bytes(conn.recv(4), byteorder="big")
+                    data = conn.recv(msgSize).decode("utf-8")
+
+                    msg = "Hello, {}!".format(data).encode("utf-8")
+                    conn.send(len(msg).to_bytes(4, byteorder="big"))
+                    conn.send(msg)
     except Exception as e:
         print(e)
 
