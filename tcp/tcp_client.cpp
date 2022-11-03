@@ -7,6 +7,21 @@
 
 using boost::asio::ip::tcp;
 
+namespace {
+
+    std::array<unsigned char, 4> int_to_bytes(int n) {
+        std::array<unsigned char, 4> bytes{};
+
+        bytes[0] = (n >> 24) & 0xFF;
+        bytes[1] = (n >> 16) & 0xFF;
+        bytes[2] = (n >> 8) & 0xFF;
+        bytes[3] = n & 0xFF;
+
+        return bytes;
+    }
+
+}
+
 int main(int argc, char **argv) {
 
     std::string host = "127.0.0.1";
@@ -27,7 +42,10 @@ int main(int argc, char **argv) {
         boost::asio::connect(socket, endpoints);
 
         for (int i = 0; i < 10; i++) {
-            std::string msg = std::to_string(i) + "\n";
+            std::string msg = std::to_string(i);
+            int msgSize = static_cast<int>(msg.size());
+
+            socket.send(boost::asio::buffer(int_to_bytes(msgSize), 4));
             socket.send(boost::asio::buffer(msg));
 
             std::array<char, 256> buf{};

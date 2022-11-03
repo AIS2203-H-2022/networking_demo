@@ -9,6 +9,15 @@
 using namespace boost::asio;
 using namespace boost::asio::ip;
 
+namespace {
+    int bytes_to_int(std::array<unsigned char, 4> buffer) {
+        return int((unsigned char) (buffer[0]) << 24 |
+                   (unsigned char) (buffer[1]) << 16 |
+                   (unsigned char) (buffer[2]) << 8 |
+                   (unsigned char) (buffer[3]));
+    }
+}// namespace
+
 class socket_handler {
 
 public:
@@ -44,9 +53,14 @@ private:
     std::unique_ptr<tcp::socket> socket_;
 
     std::string recv() {
-        boost::asio::streambuf buf;
-        auto read = boost::asio::read_until(*socket_, buf, "\n");                      // uses '\n' as delimiter
-        std::string data(boost::asio::buffer_cast<const char *>(buf.data()), read - 1);// excludes '\n'
+        std::array<unsigned char, 4> buf{};
+        boost::asio::read(*socket_, boost::asio::buffer(buf), boost::asio::transfer_exactly(4));
+        int len = bytes_to_int(buf);
+
+        boost::asio::streambuf b;
+        boost::asio::read(*socket_, b, boost::asio::transfer_exactly(len));
+
+        std::string data(boost::asio::buffer_cast<const char *>(b.data()), len);
         return data;
     }
 };
