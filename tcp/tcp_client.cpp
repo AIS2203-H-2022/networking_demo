@@ -5,22 +5,9 @@
 #include <iostream>
 #include <string>
 
+#include "network_helper.hpp"
+
 using boost::asio::ip::tcp;
-
-namespace {
-
-    std::array<unsigned char, 4> int_to_bytes(int n) {
-        std::array<unsigned char, 4> bytes{};
-
-        bytes[0] = (n >> 24) & 0xFF;
-        bytes[1] = (n >> 16) & 0xFF;
-        bytes[2] = (n >> 8) & 0xFF;
-        bytes[3] = n & 0xFF;
-
-        return bytes;
-    }
-
-}
 
 int main(int argc, char **argv) {
 
@@ -48,19 +35,25 @@ int main(int argc, char **argv) {
             socket.send(boost::asio::buffer(int_to_bytes(msgSize), 4));
             socket.send(boost::asio::buffer(msg));
 
-            std::array<char, 256> buf{};
             boost::system::error_code error;
 
-            size_t len = socket.read_some(boost::asio::buffer(buf), error);
-
+            std::array<unsigned char, 4> sizeBuf{};
+            boost::asio::read(socket, boost::asio::buffer(sizeBuf), boost::asio::transfer_exactly(4), error);
             if (error) {
                 throw boost::system::system_error(error);
             }
 
-            std::cout.write(buf.data(), static_cast<std::streamsize>(len));
+            boost::asio::streambuf buf;
+            size_t len = boost::asio::read(socket, buf, boost::asio::transfer_exactly(bytes_to_int(sizeBuf)), error);
+            if (error) {
+                throw boost::system::system_error(error);
+            }
+
+            std::string data(boost::asio::buffer_cast<const char *>(buf.data()), len);
+            std::cout << "Got reply from server: " << data << std::endl;
         }
 
-    } catch (std::exception &e) {
+    } catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;
     }
 }

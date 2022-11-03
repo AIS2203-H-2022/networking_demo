@@ -4,19 +4,13 @@
 #include <string>
 #include <thread>
 
+#include "network_helper.hpp"
+
 #include <boost/asio.hpp>
 
 using namespace boost::asio;
 using namespace boost::asio::ip;
 
-namespace {
-    int bytes_to_int(std::array<unsigned char, 4> buffer) {
-        return int((unsigned char) (buffer[0]) << 24 |
-                   (unsigned char) (buffer[1]) << 16 |
-                   (unsigned char) (buffer[2]) << 8 |
-                   (unsigned char) (buffer[3]));
-    }
-}// namespace
 
 class socket_handler {
 
@@ -32,8 +26,11 @@ public:
         t_ = std::thread([this] {
             try {
                 for (;;) {
-                    std::string data = recv();
+                    std::string data = recvMsg();
                     std::string msg = "Hello, " + data + "!";
+                    int msgSize = static_cast<int>(msg.size());
+
+                    socket_->send(boost::asio::buffer(int_to_bytes(msgSize), 4));
                     socket_->send(boost::asio::buffer(msg));
                 }
             } catch (const std::exception &ex) {
@@ -52,15 +49,25 @@ private:
     std::thread t_;
     std::unique_ptr<tcp::socket> socket_;
 
-    std::string recv() {
+    int recvSize() {
         std::array<unsigned char, 4> buf{};
         boost::asio::read(*socket_, boost::asio::buffer(buf), boost::asio::transfer_exactly(4));
-        int len = bytes_to_int(buf);
+        return bytes_to_int(buf);
+    }
 
-        boost::asio::streambuf b;
-        boost::asio::read(*socket_, b, boost::asio::transfer_exactly(len));
+    std::string recvMsg() {
 
-        std::string data(boost::asio::buffer_cast<const char *>(b.data()), len);
+        int len = recvSize();
+
+        boost::asio::streambuf buf;
+        boost::system::error_code err;
+        boost::asio::read(*socket_, buf, boost::asio::transfer_exactly(len), err);
+
+        if (err) {
+            throw boost::system::system_error(err);
+        }
+
+        std::string data(boost::asio::buffer_cast<const char *>(buf.data()), len);
         return data;
     }
 };
