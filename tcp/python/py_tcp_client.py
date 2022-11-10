@@ -14,10 +14,10 @@ def main():
             msg = "{}".format(i).encode("utf-8")
 
             msgSize = len(msg)
-            sock.send(msgSize.to_bytes(4, byteorder="big"))
+            sock.send(msgSize.to_bytes(4, byteorder="little"))
             sock.send(msg)
 
-            msgSize = int.from_bytes(sock.recv(4), byteorder="big")
+            msgSize = int.from_bytes(sock.recv(4), byteorder="little")
             data = sock.recv(msgSize).decode("utf-8")
             print("Got: {}".format(data))
 

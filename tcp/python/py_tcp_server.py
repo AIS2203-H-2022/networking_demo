@@ -14,11 +14,11 @@ def main():
             with conn:
                 print(f"Connected by {addr}")
                 while True:
-                    msgSize = int.from_bytes(conn.recv(4), byteorder="big")
+                    msgSize = int.from_bytes(conn.recv(4), byteorder="little")
                     data = conn.recv(msgSize).decode("utf-8")
 
                     msg = "Hello, {}!".format(data).encode("utf-8")
-                    conn.send(len(msg).to_bytes(4, byteorder="big"))
+                    conn.send(len(msg).to_bytes(4, byteorder="little"))
                     conn.send(msg)
     except Exception as e:
         print(e)
