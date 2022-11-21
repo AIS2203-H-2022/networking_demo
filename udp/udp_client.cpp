@@ -32,14 +32,17 @@ int main(int argc, char **argv) {
         socket.open(udp::v4());
 
         udp::endpoint receiver_endpoint(boost::asio::ip::address::from_string(host), port);
-        socket.send_to(boost::asio::buffer(message), receiver_endpoint);
 
-        udp::endpoint sender_endpoint;
-        std::array<char, 256> recv_buf{};
-        auto len = socket.receive_from(boost::asio::buffer(recv_buf), sender_endpoint);
-        std::string recv(recv_buf.begin(), recv_buf.begin() + static_cast<int>(len));
+        for (unsigned i = 0; i < 10; ++i) {
+            socket.send_to(boost::asio::buffer(message), receiver_endpoint);
 
-        std::cout << "Server responded with: " << recv << std::endl;
+            udp::endpoint sender_endpoint;
+            std::array<char, 256> recv_buf{};
+            auto len = socket.receive_from(boost::asio::buffer(recv_buf), sender_endpoint);
+            std::string recv(recv_buf.begin(), recv_buf.begin() + static_cast<int>(len));
+
+            std::cout << "Server responded with: " << recv << std::endl;
+        }
 
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
